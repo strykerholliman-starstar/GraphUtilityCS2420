@@ -1,5 +1,37 @@
 package assign07;
 
-public class Edge {
+/**
+ *  
+ * 
+ * 
+ * @author Lune Holliman &  Ryan Powell
+ * @version Oct 23 2026
+ */
+
+public class Edge<T> {
+	private Vertex<T> destination;
+	public double weight;
+	
+	
+	public Edge(Vertex<T> destination, double weight) {
+		this.destination = destination;
+		this.weight = weight;
+	}
+	
+	
+	
+	public Vertex<T> getDestination() {
+		return this.destination;
+	}
+	
+	public double getWeight() {
+		return weight;
+	}
+	
+	
+	
+	
+	
+	
 
 }
