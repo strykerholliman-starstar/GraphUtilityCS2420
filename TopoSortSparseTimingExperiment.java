@@ -12,46 +12,46 @@ import timing.TimingExperiment;
  * @version October 8, 2026
  */
 public class TopoSortSparseTimingExperiment extends TimingExperiment {
-    private static String problemSizeDescription = "vertexCount";
-    private static int problemSizeMin = 5000;
-    private static int problemSizeCount = 11;
-    private static int problemSizeStep = 1000;
-    private static int experimentIterationCount = 100;
+	private static String problemSizeDescription = "vertexCount";
+	private static int problemSizeMin = 5000;
+	private static int problemSizeCount = 11;
+	private static int problemSizeStep = 1000;
+	private static int experimentIterationCount = 100;
 
-    private static final Random rng = new Random();
-    private Graph<Integer> acyclicRandomGraph;
+	private static final Random rng = new Random();
+	private Graph<Integer> acyclicRandomGraph;
 
-    public static void main(String[] args) {
-        TimingExperiment timingExperiment = new TopoSortSparseTimingExperiment();
-        timingExperiment.printResults();
-    }
+	public static void main(String[] args) {
+		TimingExperiment timingExperiment = new TopoSortSparseTimingExperiment();
+		timingExperiment.printResults();
+	}
 
-    public TopoSortSparseTimingExperiment() {
-        super(problemSizeDescription, problemSizeMin, problemSizeCount, problemSizeStep, experimentIterationCount);
-    }
+	public TopoSortSparseTimingExperiment() {
+		super(problemSizeDescription, problemSizeMin, problemSizeCount, problemSizeStep, experimentIterationCount);
+	}
 
-    /**
-     * Setup experiment for problemSize by generating a sparse acyclic random graph.
-     * 
-     * @param problemSize - number of vertices
-     */
-    protected void setupExperiment(int problemSize) {
-    	// V = {0, 1, ..., problemSize - 1}
-    	acyclicRandomGraph = new Graph<Integer>();
-    	   	
-    	// |E| = 2 * problemSize
-        for(int i = 0; i < 2 * problemSize; i++) {
-        	// Add random edge between two random vertices.
-        	int sourceVertexData = rng.nextInt(problemSize - 1);
-        	int destinationVertexData = rng.nextInt(sourceVertexData + 1, problemSize);
-        	acyclicRandomGraph.addEdge(sourceVertexData, destinationVertexData);
-        }  
-    }
+	/**
+	 * Setup experiment for problemSize by generating a sparse acyclic random graph.
+	 * 
+	 * @param problemSize - number of vertices
+	 */
+	protected void setupExperiment(int problemSize) {
+		// V = {0, 1, ..., problemSize - 1}
+		acyclicRandomGraph = new Graph<Integer>();
 
-    /**
-     * Run the topoSort method.
-     */
-    protected void runComputation() {
-    	acyclicRandomGraph.topoSort();
-    }
+		// |E| = 2 * problemSize
+		for (int i = 0; i < 2 * problemSize; i++) {
+			// Add random edge between two random vertices.
+			int sourceVertexData = rng.nextInt(problemSize - 1);
+			int destinationVertexData = rng.nextInt(sourceVertexData + 1, problemSize);
+			acyclicRandomGraph.addEdge(sourceVertexData, destinationVertexData, 0.0);
+		}
+	}
+
+	/**
+	 * Run the topoSort method.
+	 */
+	protected void runComputation() {
+		acyclicRandomGraph.topoSort();
+	}
 }
