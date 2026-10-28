@@ -1,90 +1,179 @@
 package assign07;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
+
+/**
+ * 
+ * 
+ * 
+ * @author Lune Holliman & Ryan Powell
+ * @version Oct 23 2026
+ */
 
 public class Graph<Type> {
-	private HashMap<Type, Vertex<Type>> vertices;
+	private Map<Type, Vertex<Type>> vertices;
 
-	public Graph(List<Type> sources, List<Type> destinations) {
+	// makes a graph
+	public Graph() {
 		vertices = new HashMap<>();
 	}
 
+	// gets the name of the vertex
+	public Vertex<Type> getVertex(Type data) {
+		return vertices.get(data);
+	}
+
+	// adding edge
 	public void addEdge(Type source, Type destination, double weight) {
+		addVertex(source);
+		addVertex(destination);
+		Vertex<Type> SourceVertex = vertices.get(source);
+		Vertex<Type> DestinationVertex = vertices.get(destination);
+		SourceVertex.addEdge(DestinationVertex, weight);
 
-		// Code from lecture
-		Vertex<Type> srcVertex;
-		if (vertices.containsKey(source))
-			srcVertex = vertices.get(source);
-		else {
-			srcVertex = new Vertex<Type>(source);
-			vertices.put(source, srcVertex);
-		}
+	}
 
-		Vertex<Type> dstVertex;
-		if (vertices.containsKey(destination))
-			dstVertex = vertices.get(destination);
-		else {
-			dstVertex = new Vertex<Type>(destination);
-			vertices.put(destination, dstVertex);
+	public void addVertex(Type name) {
+		if(!vertices.containsKey(name)) {
+			vertices.put(name, new Vertex<>(name));
 		}
-		srcVertex.addEdge(dstVertex, weight);
+		
 	}
 
 	public List<Type> breadthFirstSearch(Type source, Type destination) {
+		if (!vertices.containsKey(source) || !vertices.containsKey(destination)) {
+			throw new IllegalArgumentException("Source or destination vertex does not exist in the graph");              
+		}
+		
+		for (Vertex<Type> v : vertices.values()) {
+			v.distance = Double.MAX_VALUE;
+			v.previous = null;
+		}
+		
 		Queue<Vertex<Type>> queue = new LinkedList<>();
-		queue.offer(vertices.get(source));
-		Vertex<Type> tempVertex = queue.peek();
+		Vertex<Type> src = vertices.get(source);
+		src.distance = 0.0;
+		queue.offer(src);
+		
+		boolean reached = false;
 		while (!queue.isEmpty()) {
-			tempVertex = queue.poll();
+			Vertex<Type> tempVertex = queue.poll();
+			if (tempVertex.name.equals(destination)) {
+				reached = true;
+				break;
+			}
 			for (Edge<Type> e : tempVertex.adj) {
-				if (e.getDestination().distance == 0.0) {
-					e.getDestination().distance = tempVertex.distance + 1.0;
-					e.getDestination().previous = tempVertex;
-					queue.offer(e.getDestination());
+				Vertex<Type> neighbor = e.getDestination();
+				if (neighbor.distance == Double.MAX_VALUE) {
+					neighbor.distance = tempVertex.distance + 1.0;
+					neighbor.previous = tempVertex;
+					queue.offer(neighbor);
 				}
 			}
-			if (tempVertex.data.equals(destination))
-				break;
 		}
+		
 		List<Type> returnList = new ArrayList<>();
-		returnList.add(tempVertex.data);
-		while (tempVertex.previous != null) {
-			tempVertex = tempVertex.previous;
-			returnList.add(tempVertex.data);
+		Vertex<Type> destinationVertex = vertices.get(destination);
+		
+		if (!reached && destinationVertex.previous == null && !source.equals(destination)) {
+			throw new IllegalArgumentException("Source or destination vertex does not exist in the graph");              
 		}
+		
+		Vertex<Type> curr = destinationVertex;
+		while (curr != null) {
+			returnList.add(curr.name);
+			curr = curr.previous;
+		}
+		Collections.reverse(returnList);
 		return returnList;
 	}
+	
 
 	public List<Type> dijkstrasAlgorithm(Type source, Type destination) {
-		Vertex<Type> tempVertex;
-		ArrayList<Vertex<Type>> removeList = new ArrayList<>();
-		removeList.addAll(vertices.values());
-		while (!removeList.isEmpty())
-			removeList.sort(new CompareByDistFromStartReverse<Type>());
-		tempVertex = removeList.getLast();
-		for (Edge<Type> e : tempVertex.adj) {
-			if (tempVertex.distance + e.weight < e.getDestination().distance) {
-				e.getDestination().distance = tempVertex.distance + e.weight;
-				e.getDestination().previous = tempVertex;
+		if (!vertices.containsKey(source) || !vertices.containsKey(destination)) {
+			throw new IllegalArgumentException("Source or destination vertex does not exist in the graph");                          
+		}
+		
+		for (Vertex<Type> v : vertices.values()) {
+			v.distance = Double.MAX_VALUE;
+			v.previous = null;
+		}
+		
+		Vertex<Type> srcVertex = vertices.get(source);
+		srcVertex.distance = 0.0;
+		
+		ArrayList<Vertex<Type>> unvisited = new ArrayList<>(vertices.values());
+		
+		while (!unvisited.isEmpty()) {
+			unvisited.sort(new CompareByDistFromStartReverse<Type>());
+			Vertex<Type> current = unvisited.remove(unvisited.size() - 1);
+			
+			if (current.distance == Double.MAX_VALUE) {
+				break;
 			}
-			removeList.removeLast();
+			
+			for (Edge<Type> e : current.adj) {
+				Vertex<Type> neighbor = e.getDestination();
+				double newDistance = current.distance + e.weight;
+				if (newDistance < neighbor.distance) {
+					neighbor.distance = newDistance;
+					neighbor.previous = current;
+				}
+			}
 		}
-		tempVertex = vertices.get(destination);
-
+		
 		ArrayList<Type> returnList = new ArrayList<>();
-
-		while (tempVertex != null) {
-			returnList.add(tempVertex.data);
-			tempVertex = tempVertex.previous;
+		Vertex<Type> destinationVertex = vertices.get(destination);
+		
+		if(destinationVertex.distance == Double.MAX_VALUE && !source.equals(destination)) {
+			return returnList;
 		}
+		
+		Vertex<Type> curr = destinationVertex;
+		while (curr != null) {
+			returnList.add(curr.name);
+			curr = curr.previous;
+		}
+		Collections.reverse(returnList);
 		return returnList;
 	}
 
 	public List<Type> topoSort() {
-		return null;
+		for (Vertex<Type> v1 : vertices.values()) {
+			v1.indegree = 0;
+		}
+		for (Vertex<Type> v2 : vertices.values()) {
+			for (Edge<Type> edge : v2.getAdjList()) {
+				edge.getDestination().indegree++;
+			}
+		}
+
+		Queue<Vertex<Type>> queue = new LinkedList<>();
+		for (Vertex<Type> v3 : vertices.values()) {
+			if (v3.indegree == 0) {
+				queue.add(v3);
+			}
+		}
+
+		List<Type> sortedList = new ArrayList<>();
+		while (!queue.isEmpty()) {
+			Vertex<Type> current = queue.poll();
+			sortedList.add(current.getName());
+
+			for (Edge<Type> edge : current.getAdjList()) {
+				Vertex<Type> neighbor = edge.getDestination();
+				neighbor.indegree--;
+				if (neighbor.indegree == 0) {
+					queue.add(neighbor);
+				}
+			}
+		}
+
+		if (sortedList.size() != vertices.size()) {
+			throw new IllegalArgumentException("The graph has a cycle");
+		}
+
+		return sortedList;
+
 	}
 }

@@ -15,6 +15,7 @@ public class Edge<T> {
 	
 	public Edge(Vertex<T> destination, double weight) {
 		this.weight = weight;
+		this.destination = destination;
 	}
 	
 	
