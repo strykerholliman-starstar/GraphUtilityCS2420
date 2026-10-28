@@ -2,6 +2,11 @@ package assign07;
 
 import java.util.Comparator;
 
+/**
+ * @author  Lune Holliman and Ryan Powell
+ * @version Oct 23 2026
+ */
+
 public class CompareByDistFromStartReverse<Type> implements Comparator<Vertex<Type>> {
 
 	@Override
