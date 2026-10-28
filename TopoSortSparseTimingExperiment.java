@@ -44,7 +44,8 @@ public class TopoSortSparseTimingExperiment extends TimingExperiment {
         	// Add random edge between two random vertices.
         	int sourceVertexData = rng.nextInt(problemSize - 1);
         	int destinationVertexData = rng.nextInt(sourceVertexData + 1, problemSize);
-        	acyclicRandomGraph.addEdge(sourceVertexData, destinationVertexData);
+        	int weight = 1;
+        	acyclicRandomGraph.addEdge(sourceVertexData, destinationVertexData, weight);
         }  
     }
 
