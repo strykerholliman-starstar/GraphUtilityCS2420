@@ -13,9 +13,9 @@ import timing.TimingExperiment;
  */
 public class DijkstrasSparseTimingExperiment extends TimingExperiment {
 	private static String problemSizeDescription = "vertexCount";
-	private static int problemSizeMin = 1000;
+	private static int problemSizeMin = 10000;
 	private static int problemSizeCount = 11;
-	private static int problemSizeStep = 1000;
+	private static int problemSizeStep = 10000;
 	private static int experimentIterationCount = 100;
 	private int problemSizebutforme;
 
@@ -40,12 +40,12 @@ public class DijkstrasSparseTimingExperiment extends TimingExperiment {
 		// V = {0, 1, ..., problemSize - 1}
 		acyclicRandomGraph = new Graph<Integer>();
 		// |E| = 2 * problemSize
-		int count = 0;
 
-		while (count < problemSize) {
-			acyclicRandomGraph.addEdge(count, count + 1, rng.nextDouble());
-			acyclicRandomGraph.addEdge(count, rng.nextInt(count + 1, problemSize), rng.nextDouble());
+		for (int i = 0; i < problemSize; i++) {
+			acyclicRandomGraph.addEdge(i, i + 1, rng.nextDouble(15.0));
+			acyclicRandomGraph.addEdge(i, rng.nextInt(i + 1, problemSize + 1), rng.nextDouble(15));
 		}
+
 		problemSizebutforme = problemSize;
 
 	}
@@ -54,6 +54,6 @@ public class DijkstrasSparseTimingExperiment extends TimingExperiment {
 	 * Run the topoSort method.
 	 */
 	protected void runComputation() {
-		acyclicRandomGraph.dijkstrasAlgorithm(0, problemSizebutforme);
+		acyclicRandomGraph.dijkstrasAlgorithm(1, problemSizebutforme);
 	}
 }
