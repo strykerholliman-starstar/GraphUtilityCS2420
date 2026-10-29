@@ -13,10 +13,10 @@ import timing.TimingExperiment;
  */
 public class TopoSortDenseTimingExperiment extends TimingExperiment {
 	private static String problemSizeDescription = "vertexCount";
-	private static int problemSizeMin = 5000;
-	private static int problemSizeCount = 11;
+	private static int problemSizeMin = 1000;
+	private static int problemSizeCount = 10;
 	private static int problemSizeStep = 1000;
-	private static int experimentIterationCount = 100;
+	private static int experimentIterationCount = 50;
 
 	private static final Random rng = new Random();
 	private Graph<Integer> acyclicRandomGraph;
