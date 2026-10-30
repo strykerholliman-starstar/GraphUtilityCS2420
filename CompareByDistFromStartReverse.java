@@ -3,18 +3,23 @@ package assign07;
 import java.util.Comparator;
 
 /**
- * compares by distance of two vertices into the method
+ * Defines a custom comparison for vertices, using distance.
  * 
  * @author Lune Holliman and Ryan Powell
- * @version Oct 23 2026
+ * @version Oct 29 2026
  */
 
 public class CompareByDistFromStartReverse<Type> implements Comparator<Vertex<Type>> {
 	/**
-	 * compares two vertices
+	 * Compares two vertices, using distance
 	 * 
 	 * @param o1 - one vertex being compared
 	 * @param 02 - one vertex being compared.
+	 * 
+	 * @return positive integer if the first Vertex's distance is smaller, negative
+	 *         integer if the first Vertex's distance is larger, 0 if the distance
+	 *         is the same
+	 * 
 	 */
 	@Override
 	public int compare(Vertex<Type> o1, Vertex<Type> o2) {

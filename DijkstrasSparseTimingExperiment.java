@@ -14,7 +14,7 @@ import timing.TimingExperiment;
 public class DijkstrasSparseTimingExperiment extends TimingExperiment {
 	private static String problemSizeDescription = "vertexCount";
 	private static int problemSizeMin = 10000;
-	private static int problemSizeCount = 11;
+	private static int problemSizeCount = 10;
 	private static int problemSizeStep = 10000;
 	private static int experimentIterationCount = 100;
 	private int problemSizebutforme;

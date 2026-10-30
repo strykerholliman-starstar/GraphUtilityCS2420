@@ -9,36 +9,26 @@ import java.util.Map;
 import java.util.Queue;
 
 /**
- * This class keeps algorithims with BFS, Dijkstra, and Topo sort, and also has
- * the methods for adding vertexs, edges, and making a new graph
+ * This class represents a graph data structure, which holds vertex objects and
+ * connections via edges
+ * 
  * 
  * @author Lune Holliman & Ryan Powell
- * @version Oct 23 2026
+ * @version Oct 29 2026
  */
 
 public class Graph<Type> {
 	private Map<Type, Vertex<Type>> vertices;
 
-	// makes a graph
 	public Graph() {
 		vertices = new HashMap<>();
 	}
 
 	/**
-	 * gets the name of the vertex
+	 * Connects two vertices with an Edge object
 	 * 
-	 * @param data - name of vertex
-	 * @return returns the name of the vertex
-	 */
-	public Vertex<Type> getVertex(Type data) {
-		return vertices.get(data);
-	}
-
-	/**
-	 * adding edge
-	 * 
-	 * @param source      - the source vertex
-	 * @param destination - the destination vertex
+	 * @param source      - source vertex
+	 * @param destination - destination vertex
 	 * @param weight      - weight of edge
 	 */
 	public void addEdge(Type source, Type destination, double weight) {
@@ -50,42 +40,36 @@ public class Graph<Type> {
 	}
 
 	/**
-	 * adds a vertex
+	 * Creates a new Vertex object
 	 * 
-	 * @param name - the name the vertex should have
+	 * @param data - to be stored in a new Vertex
 	 */
-	public void addVertex(Type name) {
-		if (!vertices.containsKey(name))
-			vertices.put(name, new Vertex<>(name));
+	public void addVertex(Type data) {
+		if (!vertices.containsKey(data))
+			vertices.put(data, new Vertex<>(data));
 	}
 
 	/**
-	 * does a breadth first search, going level by level in a FIFO.
+	 * Finds the shortest unweighted path between two items in a Graph
 	 * 
 	 * @param source      - source vertex
 	 * @param destination - destination vertex
-	 * @return - returns the return List which has the path.
+	 * @return - shortest weighted path from source to destination
 	 */
 	public List<Type> breadthFirstSearch(Type source, Type destination) {
 		if (!vertices.containsKey(source) || !vertices.containsKey(destination))
-			throw new IllegalArgumentException("Source or destination vertex does not exist in the graph");
-		for (Vertex<Type> v : vertices.values()) {
-			v.distance = Double.MAX_VALUE;
-			v.previous = null;
-		}
+			throw new IllegalArgumentException();
 		Queue<Vertex<Type>> queue = new LinkedList<>();
-		Vertex<Type> src = vertices.get(source);
-		src.distance = 0.0;
-		queue.offer(src);
+		queue.offer(vertices.get(source));
 		boolean reached = false;
 		while (!queue.isEmpty()) {
 			Vertex<Type> tempVertex = queue.poll();
-			if (tempVertex.name.equals(destination)) {
+			if (tempVertex.data.equals(destination)) {
 				reached = true;
 				break;
 			}
 			for (Edge<Type> e : tempVertex.adj) {
-				Vertex<Type> neighbor = e.getDestination();
+				Vertex<Type> neighbor = e.destination;
 				if (neighbor.distance == Double.MAX_VALUE) {
 					neighbor.distance = tempVertex.distance + 1.0;
 					neighbor.previous = tempVertex;
@@ -96,28 +80,26 @@ public class Graph<Type> {
 		List<Type> returnList = new ArrayList<>();
 		Vertex<Type> destinationVertex = vertices.get(destination);
 		if (!reached && destinationVertex.previous == null && !source.equals(destination))
-			throw new IllegalArgumentException("Source or destination vertex does not exist in the graph");
-		Vertex<Type> curr = destinationVertex;
-		while (curr != null) {
-			returnList.add(curr.name);
-			curr = curr.previous;
+			throw new IllegalArgumentException();
+		while (destinationVertex != null) {
+			returnList.add(destinationVertex.data);
+			destinationVertex = destinationVertex.previous;
 		}
 		Collections.reverse(returnList);
 		return returnList;
 	}
 
 	/**
-	 * a algorithim that finds the shortest path from source to destination using a
-	 * greedy apporach where it expands on the unvisited node, that has the smallest
-	 * known distance from the source.
+	 * Finds the shortest weighted path between two items in a Graph using Dijkstras
+	 * Algorithm
 	 * 
-	 * @param source      - the source vertex
-	 * @param destination - the destination vertex
-	 * @return - returns the return list, which is the path
+	 * @param source      - source vertex
+	 * @param destination - destination vertex
+	 * @return shortest weighted path from source to destination
 	 */
 	public List<Type> dijkstrasAlgorithm(Type source, Type destination) {
 		if (!vertices.containsKey(source) || !vertices.containsKey(destination))
-			throw new IllegalArgumentException("Source or destination vertex does not exist in the graph");
+			throw new IllegalArgumentException();
 		for (Vertex<Type> v : vertices.values()) {
 			v.distance = Double.MAX_VALUE;
 			v.previous = null;
@@ -131,7 +113,7 @@ public class Graph<Type> {
 			if (current.distance == Double.MAX_VALUE)
 				break;
 			for (Edge<Type> e : current.adj) {
-				Vertex<Type> neighbor = e.getDestination();
+				Vertex<Type> neighbor = e.destination;
 				double newDistance = current.distance + e.weight;
 				if (newDistance < neighbor.distance) {
 					neighbor.distance = newDistance;
@@ -145,7 +127,7 @@ public class Graph<Type> {
 			return returnList;
 		Vertex<Type> curr = destinationVertex;
 		while (curr != null) {
-			returnList.add(curr.name);
+			returnList.add(curr.data);
 			curr = curr.previous;
 		}
 		Collections.reverse(returnList);
@@ -153,36 +135,35 @@ public class Graph<Type> {
 	}
 
 	/**
-	 * Topo sort is a linear ordering of vertices, in a acylic directed graph where
-	 * each edge is directed, and the vertex u comes before vertex V (u -> v)
+	 * Topological sort is a linear ordering of vertices, in a acylic directed graph
+	 * where each edge is directed, and the vertex u comes before vertex V (u -> v)
 	 * 
-	 * @return returns the sorted list of the path
+	 * @return sorted ordering of vertices
 	 */
 	public List<Type> topoSort() {
-		for (Vertex<Type> v1 : vertices.values())
-			v1.indegree = 0;
-		for (Vertex<Type> v2 : vertices.values())
-			for (Edge<Type> edge : v2.getAdjList())
-				edge.getDestination().indegree++;
+		for (Vertex<Type> v : vertices.values())
+			v.indegree = 0;
+		for (Vertex<Type> v : vertices.values())
+			for (Edge<Type> edge : v.adj)
+				edge.destination.indegree++;
+
 		Queue<Vertex<Type>> queue = new LinkedList<>();
-		for (Vertex<Type> v3 : vertices.values())
-			if (v3.indegree == 0)
-				queue.add(v3);
+		for (Vertex<Type> v : vertices.values())
+			if (v.indegree == 0)
+				queue.add(v);
 		List<Type> sortedList = new ArrayList<>();
 		while (!queue.isEmpty()) {
 			Vertex<Type> current = queue.poll();
-			sortedList.add(current.getName());
-			for (Edge<Type> edge : current.getAdjList()) {
-				Vertex<Type> neighbor = edge.getDestination();
+			sortedList.add(current.data);
+			for (Edge<Type> edge : current.adj) {
+				Vertex<Type> neighbor = edge.destination;
 				neighbor.indegree--;
 				if (neighbor.indegree == 0)
 					queue.add(neighbor);
-
 			}
 		}
-
 		if (sortedList.size() != vertices.size())
-			throw new IllegalArgumentException("The graph has a cycle");
+			throw new IllegalArgumentException();
 		return sortedList;
 
 	}
