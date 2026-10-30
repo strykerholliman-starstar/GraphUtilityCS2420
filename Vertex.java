@@ -63,8 +63,8 @@ public class Vertex<T> {
 	/**
 	 * adds a edge to the vertex, with where it goes and its weight.
 	 * 
-	 * @param targetVertex
-	 * @param weight
+	 * @param targetVertex - the target/destination vertex
+	 * @param weight - weight of the edge
 	 */
 	public void addEdge(Vertex<T> targetVertex, double weight) {
 		adj.add(new Edge<>(targetVertex, weight));

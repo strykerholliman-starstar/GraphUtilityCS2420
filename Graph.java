@@ -9,7 +9,8 @@ import java.util.Map;
 import java.util.Queue;
 
 /**
- * 
+ * This class keeps algorithims with BFS, Dijkstra, and Topo sort, and also has
+ * the methods for adding vertexs, edges, and making a new graph
  * 
  * @author Lune Holliman & Ryan Powell
  * @version Oct 23 2026
@@ -23,12 +24,23 @@ public class Graph<Type> {
 		vertices = new HashMap<>();
 	}
 
-	// gets the name of the vertex
+	/**
+	 * gets the name of the vertex
+	 * 
+	 * @param data - name of vertex
+	 * @return returns the name of the vertex
+	 */
 	public Vertex<Type> getVertex(Type data) {
 		return vertices.get(data);
 	}
 
-	// adding edge
+	/**
+	 * adding edge
+	 * 
+	 * @param source      - the source vertex
+	 * @param destination - the destination vertex
+	 * @param weight      - weight of edge
+	 */
 	public void addEdge(Type source, Type destination, double weight) {
 		addVertex(source);
 		addVertex(destination);
@@ -37,11 +49,23 @@ public class Graph<Type> {
 		SourceVertex.addEdge(DestinationVertex, weight);
 	}
 
+	/**
+	 * adds a vertex
+	 * 
+	 * @param name - the name the vertex should have
+	 */
 	public void addVertex(Type name) {
 		if (!vertices.containsKey(name))
 			vertices.put(name, new Vertex<>(name));
 	}
 
+	/**
+	 * does a breadth first search, going level by level in a FIFO.
+	 * 
+	 * @param source      - source vertex
+	 * @param destination - destination vertex
+	 * @return - returns the return List which has the path.
+	 */
 	public List<Type> breadthFirstSearch(Type source, Type destination) {
 		if (!vertices.containsKey(source) || !vertices.containsKey(destination))
 			throw new IllegalArgumentException("Source or destination vertex does not exist in the graph");
@@ -82,6 +106,15 @@ public class Graph<Type> {
 		return returnList;
 	}
 
+	/**
+	 * a algorithim that finds the shortest path from source to destination using a
+	 * greedy apporach where it expands on the unvisited node, that has the smallest
+	 * known distance from the source.
+	 * 
+	 * @param source      - the source vertex
+	 * @param destination - the destination vertex
+	 * @return - returns the return list, which is the path
+	 */
 	public List<Type> dijkstrasAlgorithm(Type source, Type destination) {
 		if (!vertices.containsKey(source) || !vertices.containsKey(destination))
 			throw new IllegalArgumentException("Source or destination vertex does not exist in the graph");
@@ -119,6 +152,12 @@ public class Graph<Type> {
 		return returnList;
 	}
 
+	/**
+	 * Topo sort is a linear ordering of vertices, in a acylic directed graph where
+	 * each edge is directed, and the vertex u comes before vertex V (u -> v)
+	 * 
+	 * @return returns the sorted list of the path
+	 */
 	public List<Type> topoSort() {
 		for (Vertex<Type> v1 : vertices.values())
 			v1.indegree = 0;
