@@ -59,8 +59,14 @@ public class Graph<Type> {
 	public List<Type> breadthFirstSearch(Type source, Type destination) {
 		if (!vertices.containsKey(source) || !vertices.containsKey(destination))
 			throw new IllegalArgumentException();
+		for (Vertex<Type> v : vertices.values()) {
+			v.distance = Double.MAX_VALUE;
+			v.previous = null;
+		}
 		Queue<Vertex<Type>> queue = new LinkedList<>();
-		queue.offer(vertices.get(source));
+		Vertex<Type> first = vertices.get(source);
+		first.distance = 0.0;
+		queue.offer(first);
 		boolean reached = false;
 		while (!queue.isEmpty()) {
 			Vertex<Type> tempVertex = queue.poll();
